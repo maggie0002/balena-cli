@@ -103,6 +103,11 @@
       "identifier": "io.balena.cli",
       "sign": "Developer ID Installer: Rulemotion Ltd (66H43P8FRG)"
     },
+    "update": {
+      "s3": {
+        "bucket": "2048cli"
+      }
+    },
     "plugins": [
       "@oclif/plugin-help"
     ]
@@ -195,6 +200,7 @@
     "@types/update-notifier": "^4.1.1",
     "@zeit/dockerignore": "0.0.3",
     "JSONStream": "^1.0.3",
+    "aws-sdk": "^2.843.0",
     "balena-config-json": "^4.1.0",
     "balena-device-init": "^5.0.2",
     "balena-errors": "^4.7.1",
