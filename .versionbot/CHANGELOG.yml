@@ -1,4 +1,33 @@
 - commits:
+    - subject: 'Doc: Explain with example how to enable shell completion'
+      hash: 5862150a9bad0fc7f8e71b4ee108a187a3895a1b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pierre Kancir
+      nested: []
+    - subject: 'Completion: move bash completion into directory and add zsh completion'
+      hash: 673ff6a7e218cca7a3a246abbfd99ccc75c67fec
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pierre Kancir
+      nested: []
+    - subject: 'Install-linux: add example for PATH modification'
+      hash: 20b843584a45b37dd3427ad3221eb9df235723b6
+      body: >
+        This demonstrate the simplest way to modify the PATH on Linux by
+        appenning the PATH change on the shell rc file.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pierre Kancir
+      nested: []
+  version: 12.40.3
+  date: 2021-02-28T20:46:22.864Z
+- commits:
     - subject: 'docs: Fix missing markdown docs for device `deactivate` and `local-mode`'
       hash: b90c9b0d7e59353101213c6be22eaff9a9c0b274
       body: ''
