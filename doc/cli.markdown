@@ -39,10 +39,20 @@ are supported. Alternative shells include:
   [FAQ](https://github.com/balena-io/balena-cli/blob/master/TROUBLESHOOTING.md) for using the
   balena CLI with WSL and Docker Desktop for Windows.
 
-On **macOS** and **Linux,** the standard terminal window is supported. Optionally, `bash` command
-auto completion may be enabled by copying the
-[balena-completion.bash](https://github.com/balena-io/balena-cli/blob/master/balena-completion.bash)
-file to your system's `bash_completion` directory: check [Docker's command completion
+On **macOS** and **Linux,** the standard terminal window is supported.
+
+##### Optionally
+Some shell completion is available for `bash` and `zsh` shells. It can be enable by editing your shell configuration. The simpliest way is to edit you `.bashrc` or `.zshrc` files. They are on your Home directory but it is a hidden file (CTRL+H on Ubuntu to reveal them). Then put at the end of the file :
+- For Bash
+```` bash
+source PATH_TO_BALENA_CLI_DIRECTORY/completion/completion.bash
+````
+- For Zsh
+```` zsh
+source PATH_TO_BALENA_CLI_DIRECTORY/completion/completion.zsh
+````
+where PATH_TO_BALENA_CLI_DIRECTORY is the path to Balena-cli directory.
+You can also copy the completion file to your system's `bash_completion` directory: check [Docker's command completion
 guide](https://docs.docker.com/compose/completion/) for system setup instructions.
 
 ## Logging in
