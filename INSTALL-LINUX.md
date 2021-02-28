@@ -15,7 +15,7 @@ Selected operating system: **Linux**
    `balena-cli` folder.
 
 3. Add the `balena-cli` folder to the system's `PATH` environment variable. There are several
-   ways of achieving this on Linux: See this [StackOverflow post](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix). Close and reopen the terminal window
+   ways of achieving this on Linux: See this [StackOverflow post](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix). The simpliest way is to edit you `.bashrc` or `.zshrc` files. They are on your Home directory but it is a hidden file (CTRL+H on Ubuntu to reveal them). Then put at the end of the file : `export PATH=PATH_TO_BALENA_CLI_DIRECTORY:$PATH`. Where PATH_TO_BALENA_CLI_DIRECTORY is the path to Balena-cli directory. After any change on `PATH`, close and reopen the terminal window
    so that the changes to PATH can take effect.
 
 4. Check that the installation was successful by running the following commands on a

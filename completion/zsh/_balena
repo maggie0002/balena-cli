@@ -1,0 +1,81 @@
+#compdef balena
+#autoload
+
+_balena() {
+  typeset -A opt_args
+  local context state line curcontext="$curcontext"
+
+ # Valid top-level completions
+  local commands; commands=(
+            app apps build config deploy device devices env envs help key \
+            keys local login logout logs note os preload quickstart settings \
+            scan ssh util version whoami
+  )
+
+  # Sub-completions
+  app_cmds=( create restart rm )
+  config_cmds=( generate inject read reconfigure write )
+  device_cmds=( identify init move public-url reboot register rename rm \
+               shutdown )
+  device_public_url_cmds=( disable enable status )
+  env_cmds=( add rename rm )
+  key_cmds=( add rm )
+  local_cmds=( configure flash )
+  os_cmds=( build-config configure download initialize versions )
+  util_cmds=( available-drives )
+
+
+# main comphere
+  _arguments -C \
+    '(- 1 *)--version[show version and exit]' \
+    '(- 1 *)'{-h,--help}'[show help options and exit]' \
+    ':command:->command' \
+    '*::options:->options' \
+  && ret=0
+
+#sub comp here
+case $state in
+  command)
+      _describe -t commands 'command' commands "$@" && ret=0
+      return
+  ;;
+
+  options)
+    case $line[1] in
+      app)
+         _describe -t app_cmds 'app_cmd' app_cmds "$@" && ret=0
+      ;;
+
+      config)
+          _describe -t config_cmds 'config_cmd' config_cmds "$@" && ret=0
+      ;;
+
+      device)
+          _describe -t device_cmds 'device_cmd' device_cmds "$@" && ret=0
+      ;;
+
+      env)
+          _describe -t env_cmds 'env_cmd' env_cmds "$@" && ret=0
+      ;;
+
+      key)
+          _describe -t key_cmds 'key_cmd' key_cmds "$@" && ret=0
+      ;;
+
+      local)
+          _describe -t local_cmds 'local_cmd' local_cmds "$@" && ret=0
+      ;;
+
+      os)
+          _describe -t os_cmds 'os_cmd' os_cmds "$@" && ret=0
+      ;;
+
+      util)
+          _describe -t util_cmds 'util_cmd' util_cmds "$@" && ret=0
+      ;;
+    esac
+  ;;
+esac
+}
+
+_balena "$@"
