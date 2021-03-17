@@ -84,7 +84,7 @@
   "author": "Juan Cruz Viotti <juan@balena.io>",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=10.20.0 <13.0.0",
+    "node": ">=10.20.0 <15.0.0",
     "npm": "<7.0.0"
   },
   "husky": {
@@ -257,7 +257,6 @@
     "resin-cli-visuals": "^1.8.0",
     "resin-compose-parse": "^2.1.2",
     "resin-doodles": "^0.1.1",
-    "resin-image-fs": "^5.0.9",
     "resin-multibuild": "^4.7.2",
     "resin-stream-logger": "^0.1.2",
     "rimraf": "^3.0.2",
