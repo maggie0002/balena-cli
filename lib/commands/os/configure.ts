@@ -297,19 +297,6 @@ export default class OsConfigureCmd extends Command {
 }
 
 async function validateOptions(options: FlagsDef) {
-	if (process.platform === 'win32') {
-		throw new ExpectedError(stripIndent`
-			Unsupported platform error: the 'balena os configure' command currently requires
-			the Windows Subsystem for Linux in order to run on Windows. It was tested with
-			the Ubuntu 18.04 distribution from the Microsoft Store. With WSL, a balena CLI
-			release for Linux (rather than Windows) should be installed: for example, the
-			standalone zip package for Linux. (It is possible to have both a Windows CLI
-			release and a Linux CLI release installed simultaneously.) For more information
-			on WSL and the balena CLI installation options, please check:
-			- https://docs.microsoft.com/en-us/windows/wsl/about
-			- https://github.com/balena-io/balena-cli/blob/master/INSTALL.md
-		`);
-	}
 	// The 'device' and 'application' options are declared "exclusive" in the oclif
 	// flag definitions above, so oclif will enforce that they are not both used together.
 	if (!options.device && !options.application) {
