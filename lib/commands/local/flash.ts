@@ -75,6 +75,21 @@ export default class LocalFlashCmd extends Command {
 			LocalFlashCmd,
 		);
 
+		if (process.platform === 'linux') {
+			const { promisify } = await import('util');
+			const { exec } = await import('child_process');
+			const execAsync = promisify(exec);
+			const info = await execAsync('cat /proc/version');
+			if (info.stdout.toLowerCase().includes('microsoft')) {
+				console.error(
+					getChalk().yellow.bold(
+						'This command is known not to work on WSL, please use Etcher instead.',
+					),
+				);
+				process.exit(0);
+			}
+		}
+
 		const { sourceDestination, multiWrite } = await import('etcher-sdk');
 
 		const drive = await this.getDrive(options);
@@ -108,7 +123,14 @@ export default class LocalFlashCmd extends Command {
 			source,
 			destinations: [drive],
 			onFail: (_, error) => {
-				console.log(getChalk().red.bold(error.message));
+				console.error(getChalk().red.bold(error.message));
+				if (error.message.includes('EACCES')) {
+					console.error(
+						getChalk().red.bold(
+							'Try running this command with elevated privileges, with sudo or in a shell running with admininstrator privileges.',
+						),
+					);
+				}
 			},
 			onProgress: (progress) => {
 				progressBars[progress.type].update(progress);
