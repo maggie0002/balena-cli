@@ -1,4 +1,29 @@
 - commits:
+    - subject: 'local/flash: Check if environment is WSL, show warning message'
+      hash: c38a36b8b3aa77a5900e3eb6e4fe0bfab4cf4b40
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Marios Balamatsias <mbalamatsias@gmail.com>
+        signed-off-by: Marios Balamatsias <mbalamatsias@gmail.com>
+      author: Marios Balamatsias
+      nested: []
+    - subject: 'osConfigure/localFlash: Add support for Node.js v14'
+      hash: 9694a052a13ea5c0fb8b5290a9d153ccfde14f74
+      body: "* Replace old resin-image-fs with newer balena-image-fs\n* package.json: Remove resin-image-fs package\n* package: Install dependencies that work with node14\n* Remove resin-image-fs typings\n* Fix etcher-sdk related types\n* local/flash: Add unmountOnSuccess, write, direct properties on flash\n\tTaken from https://github.com/balena-io-modules/etcher-sdk/blob/master/examples/multi-destination.ts\n* tests/utils/eol-conversion: Remove ext2fs sample binary\n\tSpecifically ext2fs/build/Release/bindings.node\n\tI removed it because the file doesn't exist\n* tests/test-data/pkg: Add new expected warnings darwin/linux/windows\n\nImprove push and logs support for Node.js v14 (bump 'net-keepalive')\n"
+      footer:
+        Resolves: '#1990'
+        resolves: '#1990'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Marios Balamatsias <mbalamatsias@gmail.com>
+        signed-off-by: Marios Balamatsias <mbalamatsias@gmail.com>
+      author: Marios Balamatsias
+      nested: []
+  version: 12.43.0
+  date: 2021-03-19T14:22:34.021Z
+- commits:
     - subject: 'balena device: Display public IP address field'
       hash: 50af0760ce36e4f96e02ed37bb9eaf802ad4386c
       body: ''
