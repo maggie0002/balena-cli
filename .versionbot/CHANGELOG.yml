@@ -1,4 +1,53 @@
 - commits:
+    - subject: Also check docker-compose.dev.yml service names
+      hash: 2727dbb2463c6e07b352c4f5c2e6304d0e57a6b6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Josh Bowling <josh@balena.io>
+        signed-off-by: Josh Bowling <josh@balena.io>
+      author: Josh Bowling
+      nested: []
+    - subject: Harmonize --buildArg flag treatment between build/deploy/push commands
+      hash: 421c19f669dbc2ffa875e1d939af63748828cfaa
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Paulo Castro
+      nested: []
+    - subject: Add tests for `push --buildArgs` and refactor logic
+      hash: 701ca3091158a03092d6246f006e28a9fd95862d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Paulo Castro
+      nested: []
+    - subject: Various review fixes
+      hash: d56d3fa3e5d202bc4d69368b5f3044a417942449
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Josh Bowling <josh@balena.io>
+        signed-off-by: Josh Bowling <josh@balena.io>
+      author: Josh Bowling
+      nested: []
+    - subject: Add --buildArg support for push command
+      hash: 228e040c40c1f2c9514877fb0169cfffbae92455
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Josh Bowling <josh@balena.io>
+        signed-off-by: Josh Bowling <josh@balena.io>
+      author: Josh Bowling
+      nested: []
+  version: 12.43.0
+  date: 2021-03-22T13:39:00.058Z
+- commits:
     - subject: >-
         push: Fix docker-compose.dev.yml serialization ("should be object,null"
         error)
