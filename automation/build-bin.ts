@@ -28,6 +28,8 @@ import * as path from 'path';
 import * as rimraf from 'rimraf';
 import * as semver from 'semver';
 import * as util from 'util';
+import * as klaw from 'klaw';
+import { Stats } from 'fs';
 
 import { stripIndent } from '../lib/utils/lazy';
 import {
@@ -38,11 +40,13 @@ import {
 	StdOutTap,
 	whichSpawn,
 } from './utils';
+
+const MSYS2_BASH =
+	process.env.MSYSSHELLPATH || 'C:\\msys64\\usr\\bin\\bash.exe';
+
 export const packageJSON = loadPackageJson();
 export const version = 'v' + packageJSON.version;
 const arch = process.arch;
-const MSYS2_BASH =
-	process.env.MSYSSHELLPATH || 'C:\\msys64\\usr\\bin\\bash.exe';
 
 function dPath(...paths: string[]) {
 	return path.join(ROOT, 'dist', ...paths);
@@ -130,19 +134,19 @@ async function diffPkgOutput(pkgOut: string) {
 			'================================================================================';
 		const diff = diffLines(expectedOut, pkgOut);
 		const msg = `pkg output does not match expected output from "${relSavedPath}"
-Diff:
-${sep}
-${diff}
-${sep}
-Check whether the new or changed pkg warnings are safe to ignore, then update
-"${relSavedPath}"
-and share the result of your investigation as comments on the pull request.
-Hint: the fix is often a matter of updating the 'pkg.scripts' or 'pkg.assets'
-sections in the CLI's 'package.json' file, or a matter of updating the
-'buildPkg' function in 'automation/build-bin.ts'.  Sometimes it requires
-patching dependencies: See for example 'patches/all/open+7.0.2.patch'.
-${sep}
-`;
+	 Diff:
+	 ${sep}
+	 ${diff}
+	 ${sep}
+	 Check whether the new or changed pkg warnings are safe to ignore, then update
+	 "${relSavedPath}"
+	 and share the result of your investigation as comments on the pull request.
+	 Hint: the fix is often a matter of updating the 'pkg.scripts' or 'pkg.assets'
+	 sections in the CLI's 'package.json' file, or a matter of updating the
+	 'buildPkg' function in 'automation/build-bin.ts'.  Sometimes it requires
+	 patching dependencies: See for example 'patches/all/open+7.0.2.patch'.
+	 ${sep}
+	 `;
 		throw new Error(msg);
 	}
 }
@@ -252,8 +256,8 @@ async function testPkg() {
 		pkgNodeMajorVersion = semver.major(pkgNodeVersion);
 	} catch (err) {
 		throw new Error(stripIndent`
-			Error parsing JSON output of "balena version -j": ${err}
-			Original output: "${stdout}"`);
+				 Error parsing JSON output of "balena version -j": ${err}
+				 Original output: "${stdout}"`);
 	}
 	if (semver.major(process.version) !== pkgNodeMajorVersion) {
 		throw new Error(
@@ -299,6 +303,87 @@ async function zipPkg() {
 export async function buildStandaloneZip() {
 	console.log(`Building standalone zip package for CLI ${version}`);
 	try {
+		if (process.platform === 'darwin') {
+			console.log('Deleting unneeded zip files...');
+			await new Promise((resolve, reject) => {
+				klaw('node_modules/')
+					.on('data', (item: { path: string; stats: Stats }) => {
+						if (!item.stats.isFile()) {
+							return;
+						}
+						if (
+							path.basename(item.path).endsWith('.zip') &&
+							path.dirname(item.path).includes('test')
+						) {
+							console.log('Removing zip', item.path);
+							fs.unlinkSync(item.path);
+						}
+					})
+					.on('end', resolve)
+					.on('error', reject);
+			});
+			// Sign all .node files first
+			console.log('Signing .node files...');
+			await new Promise((resolve, reject) => {
+				klaw('node_modules/')
+					.on('data', async (item: { path: string; stats: Stats }) => {
+						if (!item.stats.isFile()) {
+							return;
+						}
+						if (path.basename(item.path).endsWith('.node')) {
+							console.log('running command:', 'codesign', [
+								'-d',
+								'-f',
+								'-s',
+								'Developer ID Application: Balena Ltd (66H43P8FRG)',
+								item.path,
+							]);
+							await whichSpawn('codesign', [
+								'-d',
+								'-f',
+								'-s',
+								'Developer ID Application: Balena Ltd (66H43P8FRG)',
+								item.path,
+							]);
+						}
+					})
+					.on('end', resolve)
+					.on('error', reject);
+			});
+			console.log('Signing other binaries...');
+			console.log('running command:', 'codesign', [
+				'-d',
+				'-f',
+				'--options=runtime',
+				'-s',
+				'Developer ID Application: Balena Ltd (66H43P8FRG)',
+				'node_modules/denymount/bin/denymount',
+			]);
+			await whichSpawn('codesign', [
+				'-d',
+				'-f',
+				'--options=runtime',
+				'-s',
+				'Developer ID Application: Balena Ltd (66H43P8FRG)',
+				'node_modules/denymount/bin/denymount',
+			]);
+			console.log('running command:', 'codesign', [
+				'-d',
+				'-f',
+				'--options=runtime',
+				'-s',
+				'Developer ID Application: Balena Ltd (66H43P8FRG)',
+				'node_modules/macmount/bin/macmount',
+			]);
+			await whichSpawn('codesign', [
+				'-d',
+				'-f',
+				'--options=runtime',
+				'-s',
+				'Developer ID Application: Balena Ltd (66H43P8FRG)',
+				'node_modules/macmount/bin/macmount',
+			]);
+		}
 		await buildPkg();
 		await testPkg();
 		await zipPkg();
@@ -344,6 +429,20 @@ async function signWindowsInstaller() {
 }
 
 /**
+ * Wait for Apple Installer Notarization to continue
+ */
+async function afterSignHook(): Promise<void> {
+	const appleId = 'accounts+apple@balena.io';
+	const { notarize } = await import('electron-notarize');
+	await notarize({
+		appBundleId: 'io.balena.etcher',
+		appPath: renamedOclifInstallers.darwin,
+		appleId,
+		appleIdPassword: '@keychain:CLI_PASSWORD',
+	});
+}
+
+/**
  * Run the `oclif-dev pack:win` or `pack:macos` command (depending on the value
  * of process.platform) to generate the native installers (which end up under
  * the 'dist' folder). There are some harcoded options such as selecting only
@@ -381,6 +480,10 @@ export async function buildOclifInstaller() {
 		// (`oclif.macos.sign` section).
 		if (process.platform === 'win32') {
 			await signWindowsInstaller();
+		} else if (process.platform === 'darwin') {
+			console.log('Notarizing package...');
+			await afterSignHook(); // Notarize
+			console.log('Package notarized.');
 		}
 		console.log(`oclif installer build completed`);
 	}
